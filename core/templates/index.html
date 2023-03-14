@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Main view</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Dashboard - SB Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+    <link href="./static/css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <script>
+        function openCounterPage(id) {
+            window.location.href = "/counter/" + id + "/";
+        }
+    </script>
+</head>
+<body  style="margin:10px;">
+    <h1>Star Wars Explorer</h1>
+    <form method="post" action="{% url 'fetch-name' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-warning">Fetch</button>
+    </form>
+	<table  class="table">
+	    <thead>
+	        <tr>
+	            <th>Name</th>
+                <th>Open Counter</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	    {% for item in my_list %}
+	        <tr>
+	            <td><a href="{% url 'collection' item.id %}">{{ item.name }}</a> </td>
+                <td><button onclick="openCounterPage('{{ item.id }}')" class="btn btn-secondary">Counter</button></td>
+	        </tr>
+	    {% endfor %}
+	    </tbody>
+	</table>
+</body>
+</html>

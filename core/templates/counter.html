@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Counter</title>
+        <base href="/">
+        <link href="./static/css/styles.css" rel="stylesheet" />
+        <style>
+            .selected {
+                background-color: rgba(65, 112, 34, 0.966);
+                color: white;
+            }
+            .selected:active {
+                background-color: rgba(255, 60, 0, 0.836);
+                color: white;
+            }
+        </style>
+    </head>
+    <body style="margin:10px;">
+        <h1>Star Wars Explorer</h1>
+        <h6>Collection: <a href="{% url 'collection' id %}">{{ name }}</a> </h6>
+        {% for item in headers %}
+            <button id="{{ item }}" onclick="toggleSelected('{{ item }}')" style="border-radius: 10px;">{{ item }}</button>
+        {% endfor %}
+        <table id="tableId" class="table">
+        </table>
+        <p id="output">No options selected</p>
+        <script>
+            function toggleSelected(id) {
+                var button = document.getElementById(id);
+                if (button.classList.contains('selected')) {
+                    button.classList.remove('selected');
+                } else {
+                    button.classList.add('selected');
+                }
+                updateOutput();
+            }
+            function updateOutput() {
+                var buttons = document.getElementsByTagName('button');
+                var selectedButtons = [];
+                var groupByColumns = [];
+                for (var i = 0; i < buttons.length; i++) {
+                    if (buttons[i].classList.contains('selected')) {
+                        selectedButtons.push(buttons[i].textContent);
+                        groupByColumns.push(i);
+                    }
+                }
+                var output = document.getElementById('output');
+                if (selectedButtons.length > 0) {
+                    output.textContent = ""; // Or if we want to see the options: 'Selected options: ' + selectedButtons.join(', ');
+                } else {
+                    output.textContent = 'No options selected.';
+                }
+
+                var mainItems='{{ json_main_items|safe }}'
+                var data = JSON.parse(mainItems);
+                // use reduce to group the data by the specified columns
+                var groupedData = data.reduce(function (accumulator, currentRow) {
+                    var groupByValues = groupByColumns.map(function (columnIndex) {
+                        return currentRow[columnIndex];
+                    });
+                    var groupKey = groupByValues.join("|");
+                    accumulator[groupKey] = (accumulator[groupKey] || 0) + 1;
+                    return accumulator;
+                }, {});
+                var table = document.getElementById("tableId");
+                table.innerHTML = '';
+                var head = document.createElement("thead");
+                var row = document.createElement("tr");
+
+
+                for (var i in groupByColumns){
+                    var cell = document.createElement("td");
+                    cell.textContent = buttons[groupByColumns[i]].textContent;
+                    row.appendChild(cell);
+                }
+                if (Object.keys(groupedData).length != 1){
+                    var cell = document.createElement("td");
+                    cell.textContent = 'count';
+                    row.appendChild(cell);
+                }
+                head.appendChild(row);
+                table.appendChild(head);
+                var body = document.createElement("tbody");
+
+                for (var i in groupedData) {
+                    var row = document.createElement("tr");
+                    var values = i.split('|');
+                    for (var j in values) {
+                        var cell = document.createElement("td");
+                        cell.textContent = values[j];
+                        row.appendChild(cell);
+                    }
+                    if (Object.keys(groupedData).length != 1){
+                        var cell = document.createElement("td");
+                        cell.textContent = groupedData[i];
+                        row.appendChild(cell);
+                        body.appendChild(row);
+                    }
+                }
+                table.appendChild(body);
+            }
+        </script>
+    </body>
+</html>

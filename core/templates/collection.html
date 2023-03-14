@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Collection</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Dashboard - SB Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+    <base href="/">
+    <link href="./static/css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body style="margin:10px;">
+    <h1>Star Wars Explorer</h1>
+    <h6>&lt;<a href="{% url 'index' %}">Collections</a> </h6>
+    <table id="tableId" class="table">
+        <thead>
+            <tr>
+                {% for item in headers %}
+                    <th>{{ item }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody id="data-container">
+
+                    {% for item in main_items|slice:":10" %}
+                        <tr>
+                            {% for cell in item %}
+                                <td>{{ cell }}</td>
+                            {% endfor %}
+                            
+                        </tr>
+                    {% endfor %}
+
+        </tbody>
+    </table>
+    <button id="load-more-button" onclick="changeLength()">Load More</button>
+
+<script >
+
+function changeLength() {
+    // var queryLength = {{ queryLength }};
+    var mainItems='{{ json_main_items|safe }}'
+    var main_items = JSON.parse(mainItems); // {{ json_main_items|safe }};
+
+    queryLength += 10;
+
+    var table = document.getElementById("data-container");
+    var queryLength = document.getElementById("tableId").rows.length ;
+
+    for (var i = queryLength; i < queryLength + 10 && i < main_items.length; i++) {
+        var item = main_items[i];
+
+        var row = document.createElement("tr");
+
+        for (var j = 0; j < item.length; j++) {
+            var cell = document.createElement("td");
+            cell.textContent = item[j];
+            row.appendChild(cell);
+        }
+
+        table.appendChild(row);
+    }
+
+}
+</script>
+</body>
+
+</html>
