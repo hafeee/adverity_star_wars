@@ -1,6 +1,6 @@
 # Star Wars Explorer Django application
 
-Small Django app for Advertisy job position.
+Small Django app for fetching and displaying Star wars characters.
 
 To run:
 ```
